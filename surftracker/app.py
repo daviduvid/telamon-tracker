@@ -495,9 +495,14 @@ def score_combinado(
     }
 
 # ===================== SPOTS =====================
+from pathlib import Path
+
 @st.cache_data(ttl=60)
 def cargar_spots(path: str = "spots_private.json"):
-    with open(path, "r", encoding="utf-8") as f:
+    base_dir = Path(__file__).parent
+    file_path = base_dir / path
+
+    with open(file_path, "r", encoding="utf-8") as f:
         spots = json.load(f)
 
     if not isinstance(spots, list) or len(spots) == 0:
