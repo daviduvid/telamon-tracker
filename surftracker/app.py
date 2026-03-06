@@ -1349,7 +1349,7 @@ with tab_mejores:
     if not best_list:
         st.warning("No hay datos para mostrar ahora mismo.")
     else:
-            if is_mobile and len(best_list) > 0:
+        if is_mobile and len(best_list) > 0:
             top_item = best_list[0]
             b = top_item["best"]
             n = top_item["nowrow"]
