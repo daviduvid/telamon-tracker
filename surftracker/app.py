@@ -1399,7 +1399,7 @@ with tab_mejores:
 """,
                 unsafe_allow_html=True,
             )
-        st.markdown("### TOP 3 ahora")
+        st.markdown("### Más opciones" if is_mobile else "### TOP 3 ahora")
         st.markdown("<div class='tabbar-note'>Las tres mejores opciones del momento, ajustadas con tu histórico de condiciones parecidas.</div>", unsafe_allow_html=True)
         st.write("")
 
