@@ -379,7 +379,7 @@ def guardar_observacion_repo(df):
 
     requests.put(url, headers=github_headers(), json=payload)
     def cargar_observaciones() -> pd.DataFrame:
-    if os.path.exists(OBS_FILE):
+        if os.path.exists(OBS_FILE):
         df = pd.read_csv(OBS_FILE)
         if "timestamp" in df.columns:
             df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
