@@ -331,7 +331,54 @@ def telamon_en_ventana(t: pd.Timestamp, tide_val: float, mareas_llenas: pd.Datet
     return (t >= start) and (t <= end)
 
 # ===================== OBSERVACIONES =====================
-def cargar_observaciones() -> pd.DataFrame:
+def github_cfg():
+    return {
+        "token": st.secrets["github_token"],
+        "owner": st.secrets["github_owner"],
+        "repo": st.secrets["github_repo"],
+        "path": st.secrets["github_csv_path"],
+    }
+
+def github_headers():
+    cfg = github_cfg()
+    return {
+        "Authorization": f"Bearer {cfg['token']}",
+        "Accept": "application/vnd.github+json",
+    }
+
+def cargar_observaciones_repo():
+    cfg = github_cfg()
+    url = f"https://api.github.com/repos/{cfg['owner']}/{cfg['repo']}/contents/{cfg['path']}"
+
+    r = requests.get(url, headers=github_headers())
+
+    if r.status_code == 404:
+        return pd.DataFrame()
+
+    payload = r.json()
+    raw = base64.b64decode(payload["content"]).decode("utf-8")
+
+    return pd.read_csv(io.StringIO(raw))
+
+def guardar_observacion_repo(df):
+    cfg = github_cfg()
+    url = f"https://api.github.com/repos/{cfg['owner']}/{cfg['repo']}/contents/{cfg['path']}"
+
+    r = requests.get(url, headers=github_headers())
+    sha = r.json()["sha"]
+
+    csv_data = df.to_csv(index=False)
+
+    content = base64.b64encode(csv_data.encode()).decode()
+
+    payload = {
+        "message": "update observaciones",
+        "content": content,
+        "sha": sha
+    }
+
+    requests.put(url, headers=github_headers(), json=payload)
+    def cargar_observaciones() -> pd.DataFrame:
     if os.path.exists(OBS_FILE):
         df = pd.read_csv(OBS_FILE)
         if "timestamp" in df.columns:
