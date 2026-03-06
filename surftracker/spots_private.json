@@ -43,5 +43,18 @@
     "secondary_swell_max_score": 2.0,
     "secondary_swell_only_if_primary_bad": true
   }
+},
+  {
+  "name": "Papelillos",
+  "latitude": 29.1347413,
+  "longitude": -13.5337199,
+  "timezone": "Atlantic/Canary",
+  "preferences": {
+    "ideal_wave_height_m": [0.9, 1.8],
+    "ideal_period_s": [11, 15],
+    "ideal_swell_direction_deg": 315,
+    "offshore_wind_direction_deg": 135,
+    "max_wind_speed_kmh": 18
+  }
 }
 ]
