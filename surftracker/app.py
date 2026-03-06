@@ -1449,7 +1449,8 @@ with tab_hist:
     st.write("")
 
     obs = migrar_observaciones(cargar_observaciones())
-        admin_key_hist = st.text_input("Clave admin para editar/borrar", type="password", key="hist_admin")
+        
+    admin_key_hist = st.text_input("Clave admin para editar/borrar", type="password", key="hist_admin")
 
     if not obs.empty:
         obs["timestamp"] = pd.to_datetime(obs["timestamp"], errors="coerce", utc=True).dt.tz_convert(TZ)
