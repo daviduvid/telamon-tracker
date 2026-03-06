@@ -331,6 +331,7 @@ def telamon_en_ventana(t: pd.Timestamp, tide_val: float, mareas_llenas: pd.Datet
     return (t >= start) and (t <= end)
 
 # ===================== OBSERVACIONES =====================
+
 def github_cfg():
     return {
         "token": st.secrets["github_token"],
@@ -346,26 +347,43 @@ def github_headers():
         "Accept": "application/vnd.github+json",
     }
 
-def cargar_observaciones_repo():
+def columnas_observaciones():
+    return [
+        "timestamp","spot","mi_nota_10","comentario",
+        "score_parte_10","main_h","main_per","main_dir",
+        "wind_spd","wind_dir","tide","w_state"
+    ]
+
+def cargar_observaciones() -> pd.DataFrame:
     cfg = github_cfg()
     url = f"https://api.github.com/repos/{cfg['owner']}/{cfg['repo']}/contents/{cfg['path']}"
 
     r = requests.get(url, headers=github_headers())
 
     if r.status_code == 404:
-        return pd.DataFrame()
+        return pd.DataFrame(columns=columnas_observaciones())
 
     payload = r.json()
     raw = base64.b64decode(payload["content"]).decode("utf-8")
 
-    return pd.read_csv(io.StringIO(raw))
+    df = pd.read_csv(io.StringIO(raw))
 
-def guardar_observacion_repo(df):
+    if "timestamp" in df.columns:
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+
+    return df
+
+
+def guardar_observacion_repo(df: pd.DataFrame):
+
     cfg = github_cfg()
     url = f"https://api.github.com/repos/{cfg['owner']}/{cfg['repo']}/contents/{cfg['path']}"
 
     r = requests.get(url, headers=github_headers())
-    sha = r.json()["sha"]
+
+    sha = None
+    if r.status_code == 200:
+        sha = r.json()["sha"]
 
     csv_data = df.to_csv(index=False)
 
@@ -374,25 +392,16 @@ def guardar_observacion_repo(df):
     payload = {
         "message": "update observaciones",
         "content": content,
-        "sha": sha
     }
 
-    requests.put(url, headers=github_headers(), json=payload)
-    def cargar_observaciones() -> pd.DataFrame:
-        if os.path.exists(OBS_FILE):
-            df = pd.read_csv(OBS_FILE)
-        
-            if "timestamp" in df.columns:
-                df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
-            return df
+    if sha:
+        payload["sha"] = sha
 
-    return pd.DataFrame(columns=[
-        "timestamp", "spot", "mi_nota_10", "comentario",
-        "score_parte_10", "main_h", "main_per", "main_dir",
-        "wind_spd", "wind_dir", "tide", "w_state"
-    ])
+    requests.put(url, headers=github_headers(), json=payload)
+
 
 def migrar_observaciones(df: pd.DataFrame) -> pd.DataFrame:
+
     required = {
         "timestamp": pd.NaT,
         "spot": "",
@@ -407,11 +416,15 @@ def migrar_observaciones(df: pd.DataFrame) -> pd.DataFrame:
         "tide": np.nan,
         "w_state": "",
     }
+
     out = df.copy()
+
     for col, default in required.items():
         if col not in out.columns:
             out[col] = default
+
     return out
+
 
 def guardar_observacion(
     spot: str,
@@ -419,10 +432,12 @@ def guardar_observacion(
     comentario: str,
     when_ts: pd.Timestamp,
     snapshot: Optional[Dict[str, Any]] = None,
-) -> None:
+):
+
     df = migrar_observaciones(cargar_observaciones())
 
     snap = snapshot or {}
+
     nueva = pd.DataFrame([{
         "timestamp": when_ts.isoformat(),
         "spot": str(spot),
@@ -439,6 +454,7 @@ def guardar_observacion(
     }])
 
     df2 = pd.concat([df, nueva], ignore_index=True)
+
     guardar_observacion_repo(df2)
 
 def distancia_condiciones(row: pd.Series, target: Dict[str, Any]) -> float:
@@ -490,7 +506,7 @@ def predecir_mi_nota_por_similares(
     min_obs: int = 3,
     k: int = 7,
 ) -> Dict[str, Any]:
-    obs = migrar_observaciones(cargar_observaciones_local())
+    obs = migrar_observaciones(cargar_observaciones())
     if obs.empty:
         return {"pred_10": None, "n_obs": 0, "modo": "sin_historial"}
 
