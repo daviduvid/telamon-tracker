@@ -265,6 +265,73 @@ thead th{
     line-height: 1.1 !important;
   }
 }
+.hero-card{
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(1200px 300px at 20% 0%, rgba(43,124,255,.18), transparent 45%),
+    linear-gradient(180deg, rgba(255,255,255,.06), transparent 40%),
+    var(--card);
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 14px 32px rgba(0,0,0,.28);
+  margin-bottom: 14px;
+}
+
+.hero-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.hero-title{
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing:-0.03em;
+}
+
+.hero-score{
+  font-size: 42px;
+  font-weight: 950;
+  letter-spacing:-0.04em;
+  line-height:1;
+}
+
+.hero-sub{
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hero-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+
+@media (max-width: 768px){
+  .hero-card{
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .hero-title{
+    font-size: 18px !important;
+  }
+
+  .hero-score{
+    font-size: 34px !important;
+  }
+
+  .hero-sub{
+    font-size: 11px !important;
+  }
+
+  .hero-row{
+    gap:6px !important;
+  }
+}
 </style>
 """
 st.markdown(APP_CSS, unsafe_allow_html=True)
@@ -1282,6 +1349,56 @@ with tab_mejores:
     if not best_list:
         st.warning("No hay datos para mostrar ahora mismo.")
     else:
+            if is_mobile and len(best_list) > 0:
+            top_item = best_list[0]
+            b = top_item["best"]
+            n = top_item["nowrow"]
+            score = float(top_item["score_final"])
+            bcol = color_score(score)
+
+            tel = ""
+            if top_item["name"].strip().lower() == "telamon":
+                ok = bool(b["en_ventana"]) and float(b["tide"]) > 0.75
+                tel = f" · {'✅ Ventana' if ok else '⛔ Fuera'}"
+
+            pred_txt = (
+                f"Tu nota esperada {top_item['mi_pred']:.1f}/10"
+                if top_item["mi_pred"] is not None
+                else "Aún sin aprendizaje"
+            )
+
+            st.markdown(
+                f"""
+<div class="hero-card">
+  <div class="hero-top">
+    <div>
+      <div class="hero-title">🏆 Mejor ahora: {top_item["name"]}</div>
+      <div class="hero-sub">Mejor en {b["time"].strftime('%a %H:%M')}{tel}</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="hero-score" style="color:{bcol};">{score:.1f}</div>
+      <div class="hero-sub">{rating(score)}</div>
+    </div>
+  </div>
+
+  <div class="hero-row">
+    <span class="pill">🌊 {float(b["main_h"]):.1f}m · {float(b["main_per"]):.0f}s</span>
+    <span class="pill">🧭 {deg_to_arrow(float(b["main_dir"]))} {deg_to_compass(float(b["main_dir"]))} {float(b["main_dir"]):.0f}°</span>
+  </div>
+
+  <div class="hero-row">
+    <span class="pill">🌬️ {float(n["wind_spd"]):.0f} km/h · {deg_to_arrow(float(n["wind_dir"]))} {deg_to_compass(float(n["wind_dir"]))} · {n["w_state"]}</span>
+    <span class="pill">🌖 {float(n["tide"]):.2f}m</span>
+  </div>
+
+  <div class="hero-row">
+    <span class="pill">🎯 Parte {float(b["score10"]):.1f}/10</span>
+    <span class="pill">🧠 {pred_txt}</span>
+  </div>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
         st.markdown("### TOP 3 ahora")
         st.markdown("<div class='tabbar-note'>Las tres mejores opciones del momento, ajustadas con tu histórico de condiciones parecidas.</div>", unsafe_allow_html=True)
         st.write("")
