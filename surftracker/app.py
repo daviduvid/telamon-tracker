@@ -18,7 +18,11 @@ ACTUALIZACION_MIN = 10
 ACTUALIZACION_MS = ACTUALIZACION_MIN * 60 * 1000
 OBS_FILE = "observaciones.csv"
 
-st.set_page_config(page_title="Surf Tracker", layout="wide")
+st.set_page_config(
+    page_title="Surf Tracker",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
 
 # ===================== AUTO-REFRESH =====================
 try:
