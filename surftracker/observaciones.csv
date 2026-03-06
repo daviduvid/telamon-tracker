@@ -1,2 +1,1 @@
-timestamp,spot,mi_nota_10,comentario,score_parte_10,main_h,main_per,main_dir,wind_spd,wind_dir,tide,w_state
-2026-03-05 19:39:34.188511+00:00,Telamon,2.0,"fue a la 13:30, la ola estaba perfecta pero le faltaba mucho tamaño ",,,,,,,,
+timestamp,spot,mi_nota_10,comentario,score_parte_10,main_h,main_per,main_dir,wind_spd,wind_dir,tide,w_state,id
