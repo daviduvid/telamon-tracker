@@ -213,6 +213,58 @@ thead th{
   .pill{ font-size: 11px; padding: 6px 10px; }
   .dirarrow{ font-size:18px; }
 }
+@media (max-width: 768px){
+  .card{
+    min-height: auto !important;
+    padding: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .kpi{
+    font-size: 22px !important;
+  }
+
+  .subkpi{
+    font-size: 11px !important;
+  }
+
+  .pill{
+    font-size: 10px !important;
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+
+  .scorebubble{
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 14px !important;
+  }
+
+  th, td{
+    padding: 6px 4px !important;
+    font-size: 11px !important;
+  }
+
+  .dirarrow{
+    font-size: 16px !important;
+  }
+
+  .dirdeg{
+    font-size: 11px !important;
+  }
+
+  .dircompass{
+    font-size: 10px !important;
+  }
+
+  .tabbar-note{
+    font-size: 11px !important;
+  }
+
+  h1, h2, h3{
+    line-height: 1.1 !important;
+  }
+}
 </style>
 """
 st.markdown(APP_CSS, unsafe_allow_html=True)
@@ -989,6 +1041,17 @@ st.markdown(
 )
 st.write("")
 
+if is_mobile:
+    st.markdown(
+        """
+<div class="section-card" style="margin-bottom:12px;">
+  <div style="font-size:18px;font-weight:900;">📱 Modo móvil</div>
+  <div class="smallmuted">Vista compacta para consultar rápido spots, registrar sesión y revisar historial.</div>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
 # ===================== SPOTS =====================
 spots = cargar_spots()
 
@@ -1223,9 +1286,9 @@ with tab_mejores:
         st.markdown("<div class='tabbar-note'>Las tres mejores opciones del momento, ajustadas con tu histórico de condiciones parecidas.</div>", unsafe_allow_html=True)
         st.write("")
 
-        cols = st.columns(3)
-        for i, item in enumerate(best_list[:3]):
-            with cols[i]:
+       cols = st.columns(1 if is_mobile else 3)
+       for i, item in enumerate(best_list[:3]):
+           with cols[0] if is_mobile else cols[i]:
                 b = item["best"]
                 n = item["nowrow"]
                 score = float(item["score_final"])
@@ -1304,9 +1367,9 @@ with tab_olas:
     if not all_list:
         st.warning("No hay datos para mostrar ahora mismo.")
     else:
-        cols = st.columns(3)
+        cols = st.columns(1 if is_mobile else 3)
         for i, item in enumerate(all_list):
-            with cols[i % 3]:
+            with cols[0] if is_mobile else cols[i % 3]:
                 b = item["best"]
                 n = item["nowrow"]
                 score = float(item["score_final"])
