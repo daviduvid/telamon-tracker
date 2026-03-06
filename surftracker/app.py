@@ -1286,10 +1286,10 @@ with tab_mejores:
         st.markdown("<div class='tabbar-note'>Las tres mejores opciones del momento, ajustadas con tu histórico de condiciones parecidas.</div>", unsafe_allow_html=True)
         st.write("")
 
-       cols = st.columns(1 if is_mobile else 3)
+        cols = st.columns(1 if is_mobile else 3)
        
-       for i, item in enumerate(best_list[:3]):
-           with cols[0] if is_mobile else cols[i]:
+        for i, item in enumerate(best_list[:3]):
+            with cols[0] if is_mobile else cols[i]:
                 b = item["best"]
                 n = item["nowrow"]
                 score = float(item["score_final"])
