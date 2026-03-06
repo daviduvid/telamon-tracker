@@ -438,7 +438,7 @@ def guardar_observacion(
     }])
 
     df2 = pd.concat([df, nueva], ignore_index=True)
-    df2.to_csv(OBS_FILE, index=False)
+    guardar_observacion_repo(df2)
 
 def distancia_condiciones(row: pd.Series, target: Dict[str, Any]) -> float:
     penalties = []
@@ -1381,6 +1381,7 @@ with tab_reg:
         except Exception:
             snapshot_preview = None
 
+    admin_key_input = st.text_input("Clave admin", type="password")
     if st.button("💾 Guardar", use_container_width=True):
         dt = datetime.combine(fecha, hora)
         when_ts = pd.Timestamp(dt).tz_localize(TZ)
