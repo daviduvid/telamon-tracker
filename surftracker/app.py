@@ -23,7 +23,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
-
+is_mobile = st.query_params.get("mobile","0") == "1"
 # ===================== AUTO-REFRESH =====================
 try:
     from streamlit_autorefresh import st_autorefresh
