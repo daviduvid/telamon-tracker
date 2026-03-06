@@ -490,7 +490,7 @@ def predecir_mi_nota_por_similares(
     min_obs: int = 3,
     k: int = 7,
 ) -> Dict[str, Any]:
-    obs = migrar_observaciones(cargar_observaciones())
+    obs = migrar_observaciones(cargar_observaciones_local())
     if obs.empty:
         return {"pred_10": None, "n_obs": 0, "modo": "sin_historial"}
 
