@@ -1,0 +1,5 @@
+timestamp,spot,mi_nota_10,comentario,score_parte_10,main_h,main_per,main_dir,wind_spd,wind_dir,tide,w_state
+2026-03-05 19:39:34.188511+00:00,Telamon,2.0,"fue a la 13:30, la ola estaba perfecta pero le faltaba mucho tamaño ",,,,,,,,
+,Telamon,3.5,,1.736842105263158,0.38,8.45,34.0,42.7,33.0,0.63,LADO
+,Telamon,3.0,poca fuerza,1.736842105263158,0.4,8.25,35.0,43.5,24.0,0.72,LADO
+2026-03-06T15:22:00+00:00,Telamon,3.0,poca fuerza,1.736842105263158,0.4,8.25,35.0,43.5,24.0,0.72,LADO

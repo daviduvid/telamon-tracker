@@ -1,0 +1,28 @@
+[
+  {
+    "name": "El Fronton",
+    "latitude": 28.156,
+    "longitude": -15.432,
+    "timezone": "Atlantic/Canary",
+    "preferences": {
+      "ideal_wave_height_m": [1.0, 3.0],
+      "ideal_period_s": [10, 17],
+      "ideal_swell_direction_deg": 320,
+      "offshore_wind_direction_deg": 90,
+      "max_wind_speed_kmh": 30
+    }
+  },
+  {
+    "name": "La Cicer",
+    "latitude": 28.139,
+    "longitude": -15.440,
+    "timezone": "Atlantic/Canary",
+    "preferences": {
+      "ideal_wave_height_m": [0.7, 1.8],
+      "ideal_period_s": [8, 14],
+      "ideal_swell_direction_deg": 300,
+      "offshore_wind_direction_deg": 100,
+      "max_wind_speed_kmh": 25
+    }
+  }
+]
