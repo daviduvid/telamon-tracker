@@ -1,4 +1,5 @@
 import base64
+import uuid
 import io
 import json
 import os
@@ -349,7 +350,7 @@ def github_headers():
 
 def columnas_observaciones():
     return [
-        "timestamp","spot","mi_nota_10","comentario",
+        "id","timestamp","spot","mi_nota_10","comentario",
         "score_parte_10","main_h","main_per","main_dir",
         "wind_spd","wind_dir","tide","w_state"
     ]
@@ -403,6 +404,7 @@ def guardar_observacion_repo(df: pd.DataFrame):
 def migrar_observaciones(df: pd.DataFrame) -> pd.DataFrame:
 
     required = {
+        "id": "",
         "timestamp": pd.NaT,
         "spot": "",
         "mi_nota_10": np.nan,
@@ -439,6 +441,7 @@ def guardar_observacion(
     snap = snapshot or {}
 
     nueva = pd.DataFrame([{
+        "id": str(uuid.uuid4()),
         "timestamp": when_ts.isoformat(),
         "spot": str(spot),
         "mi_nota_10": float(mi_nota_10),
@@ -457,6 +460,31 @@ def guardar_observacion(
 
     guardar_observacion_repo(df2)
 
+def actualizar_observacion(session_id: str, nuevos_datos: Dict[str, Any]) -> None:
+    df = migrar_observaciones(cargar_observaciones())
+
+    if df.empty or "id" not in df.columns:
+        raise ValueError("No hay observaciones para actualizar.")
+
+    mask = df["id"].astype(str) == str(session_id)
+    if not mask.any():
+        raise ValueError("No se encontró la sesión.")
+
+    for k, v in nuevos_datos.items():
+        if k in df.columns:
+            df.loc[mask, k] = v
+
+    guardar_observacion_repo(df)
+
+def borrar_observacion(session_id: str) -> None:
+    df = migrar_observaciones(cargar_observaciones())
+
+    if df.empty or "id" not in df.columns:
+        raise ValueError("No hay observaciones para borrar.")
+
+    df = df[df["id"].astype(str) != str(session_id)].copy()
+    guardar_observacion_repo(df)
+    
 def distancia_condiciones(row: pd.Series, target: Dict[str, Any]) -> float:
     penalties = []
     weights = {
@@ -1421,6 +1449,74 @@ with tab_hist:
     st.write("")
 
     obs = migrar_observaciones(cargar_observaciones())
+        admin_key_hist = st.text_input("Clave admin para editar/borrar", type="password", key="hist_admin")
+
+    if not obs.empty:
+        obs["timestamp"] = pd.to_datetime(obs["timestamp"], errors="coerce", utc=True).dt.tz_convert(TZ)
+        obs = obs.dropna(subset=["timestamp"]).sort_values("timestamp", ascending=False)
+
+        opciones = obs.apply(
+            lambda r: f"{r['timestamp'].strftime('%d/%m/%Y %H:%M')} · {r['spot']} · nota {float(r['mi_nota_10']):.1f}",
+            axis=1
+        ).tolist()
+
+        ids = obs["id"].astype(str).tolist()
+
+        st.markdown("### Editar o borrar sesión")
+        idx_sel = st.selectbox("Selecciona una sesión", range(len(opciones)), format_func=lambda i: opciones[i])
+        fila_sel = obs.iloc[idx_sel]
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            nuevo_spot = st.text_input("Spot", value=str(fila_sel["spot"]), key="edit_spot")
+        with col2:
+            nueva_nota = st.number_input(
+                "Mi nota",
+                min_value=1.0,
+                max_value=10.0,
+                value=float(fila_sel["mi_nota_10"]),
+                step=0.5,
+                key="edit_nota"
+            )
+        with col3:
+            nuevo_comentario = st.text_input(
+                "Comentario",
+                value=str(fila_sel["comentario"]) if pd.notna(fila_sel["comentario"]) else "",
+                key="edit_comment"
+            )
+
+        cedit, cdel = st.columns(2)
+
+        with cedit:
+            if st.button("✏️ Guardar cambios", use_container_width=True):
+                if admin_key_hist != st.secrets["admin_key"]:
+                    st.error("Clave admin incorrecta")
+                else:
+                    try:
+                        actualizar_observacion(
+                            session_id=ids[idx_sel],
+                            nuevos_datos={
+                                "spot": nuevo_spot,
+                                "mi_nota_10": nueva_nota,
+                                "comentario": nuevo_comentario,
+                            }
+                        )
+                        st.success("Sesión actualizada ✅")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"No se pudo actualizar: {e}")
+
+        with cdel:
+            if st.button("🗑️ Borrar sesión", use_container_width=True):
+                if admin_key_hist != st.secrets["admin_key"]:
+                    st.error("Clave admin incorrecta")
+                else:
+                    try:
+                        borrar_observacion(ids[idx_sel])
+                        st.success("Sesión borrada ✅")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"No se pudo borrar: {e}")
     if obs.empty:
         st.info("Aún no has guardado sesiones.")
     else:
