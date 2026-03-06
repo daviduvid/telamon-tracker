@@ -1287,6 +1287,7 @@ with tab_mejores:
         st.write("")
 
        cols = st.columns(1 if is_mobile else 3)
+       
        for i, item in enumerate(best_list[:3]):
            with cols[0] if is_mobile else cols[i]:
                 b = item["best"]
