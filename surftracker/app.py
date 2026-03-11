@@ -1623,13 +1623,13 @@ with tab_reg:
                 comentario=comentario,
                 when_ts=when_ts,
                 snapshot=snapshot_preview,
-           )
+            )
 
-           st.success("Guardado ✅")
+            st.success("Guardado ✅")
 
-           import time
-           time.sleep(1)
-           st.rerun()
+            import time
+            time.sleep(1)
+            st.rerun()
 
 # ===================== TAB HISTORIAL =====================
 with tab_hist:
