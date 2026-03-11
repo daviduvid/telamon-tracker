@@ -1672,7 +1672,7 @@ with tab_hist:
         st.info("Aún no has guardado sesiones.")
     else:
         if "timestamp" in obs.columns:
-            obs["timestamp"] = pd.to_datetime(obs["timestamp"], errors="coerce", utc=True)
+            obs["timestamp"] = pd.to_datetime(obs["timestamp"], errors="coerce")
             obs["timestamp"] = obs["timestamp"].dt.tz_convert(TZ)
 
         obs = obs.dropna(subset=["timestamp"]).sort_values("timestamp", ascending=False)
