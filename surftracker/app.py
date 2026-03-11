@@ -1613,16 +1613,23 @@ with tab_reg:
 
     admin_key_input = st.text_input("Clave admin", type="password")
     if st.button("💾 Guardar", use_container_width=True):
+
         dt = datetime.combine(fecha, hora)
         when_ts = pd.Timestamp(dt).tz_localize(TZ)
+
         guardar_observacion(
             spot=spot_sel,
             mi_nota_10=mi_nota,
             comentario=comentario,
             when_ts=when_ts,
             snapshot=snapshot_preview,
-        )
-        st.success("Guardado ✅")
+       )
+
+       st.success("Guardado ✅")
+
+       import time
+       time.sleep(1)
+       st.rerun()
 
 # ===================== TAB HISTORIAL =====================
 with tab_hist:
