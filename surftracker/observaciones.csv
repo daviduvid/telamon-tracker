@@ -1,4 +1,5 @@
 timestamp,spot,mi_nota_10,comentario,score_parte_10,main_h,main_per,main_dir,wind_spd,wind_dir,tide,w_state,id
 2026-03-06 13:30:00+00:00,Telamon,2.5,,1.736842105263158,0.36,8.25,32.0,40.1,31.0,0.29,LADO,49ed3f59-0bee-4393-9939-342758ad828e
 ,Telamon,4.5,"Estaba súper bien, pero marea muy bua ",2.3157894736842106,1.16,7.1,63.0,35.1,27.0,-0.45,LADO,3122dda5-fa1b-4843-be3c-64697ad80f36
-2026-03-11T14:10:00+00:00,Telamon,4.5,,2.3157894736842106,1.16,7.1,63.0,35.1,27.0,-0.45,LADO,4f00ae43-3aa2-45de-b0d4-1321cf37331b
+,Telamon,4.5,,2.3157894736842106,1.16,7.1,63.0,35.1,27.0,-0.45,LADO,4f00ae43-3aa2-45de-b0d4-1321cf37331b
+2026-03-11T14:10:00+00:00,Telamon,4.5,,2.3157894736842106,1.16,7.1,63.0,35.1,27.0,-0.45,LADO,54cf621e-71cb-4b82-80cf-b0b64108ab4b
