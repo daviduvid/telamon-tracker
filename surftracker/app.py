@@ -1643,7 +1643,7 @@ with tab_hist:
     if st.button("🔄 Recargar historial", key="reload_hist"):
         st.rerun()
 
-    obs = migrar_observaciones(cargar_observaciones())
+    obs = migrar_observaciones(cargar_observaciones_repo())
 
     if obs.empty:
         st.info("Aún no has guardado sesiones.")
