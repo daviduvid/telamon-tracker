@@ -1640,91 +1640,31 @@ with tab_hist:
     )
     st.write("")
 
+    if st.button("🔄 Recargar historial", key="reload_hist"):
+        st.rerun()
+
     obs = migrar_observaciones(cargar_observaciones())
-        
-    admin_key_hist = st.text_input("Clave admin para editar/borrar", type="password", key="hist_admin")
 
-    if not obs.empty:
-        obs["timestamp"] = pd.to_datetime(obs["timestamp"], errors="coerce", utc=True).dt.tz_convert(TZ)
-        obs = obs.dropna(subset=["timestamp"]).sort_values("timestamp", ascending=False)
-
-        opciones = obs.apply(
-            lambda r: f"{r['timestamp'].strftime('%d/%m/%Y %H:%M')} · {r['spot']} · nota {float(r['mi_nota_10']):.1f}",
-            axis=1
-        ).tolist()
-
-        ids = obs["id"].astype(str).tolist()
-
-        st.markdown("### Editar o borrar sesión")
-        idx_sel = st.selectbox("Selecciona una sesión", range(len(opciones)), format_func=lambda i: opciones[i])
-        fila_sel = obs.iloc[idx_sel]
-
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            nuevo_spot = st.text_input("Spot", value=str(fila_sel["spot"]), key="edit_spot")
-        with col2:
-            nueva_nota = st.number_input(
-                "Mi nota",
-                min_value=1.0,
-                max_value=10.0,
-                value=float(fila_sel["mi_nota_10"]),
-                step=0.5,
-                key="edit_nota"
-            )
-        with col3:
-            nuevo_comentario = st.text_input(
-                "Comentario",
-                value=str(fila_sel["comentario"]) if pd.notna(fila_sel["comentario"]) else "",
-                key="edit_comment"
-            )
-
-        cedit, cdel = st.columns(2)
-
-        with cedit:
-            if st.button("✏️ Guardar cambios", use_container_width=True):
-                if admin_key_hist != st.secrets["admin_key"]:
-                    st.error("Clave admin incorrecta")
-                else:
-                    try:
-                        actualizar_observacion(
-                            session_id=ids[idx_sel],
-                            nuevos_datos={
-                                "spot": nuevo_spot,
-                                "mi_nota_10": nueva_nota,
-                                "comentario": nuevo_comentario,
-                            }
-                        )
-                        st.success("Sesión actualizada ✅")
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"No se pudo actualizar: {e}")
-
-        with cdel:
-            if st.button("🗑️ Borrar sesión", use_container_width=True):
-                if admin_key_hist != st.secrets["admin_key"]:
-                    st.error("Clave admin incorrecta")
-                else:
-                    try:
-                        borrar_observacion(ids[idx_sel])
-                        st.success("Sesión borrada ✅")
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"No se pudo borrar: {e}")
     if obs.empty:
         st.info("Aún no has guardado sesiones.")
     else:
-        obs["timestamp"] = pd.to_datetime(obs["timestamp"], errors="coerce", utc=True).dt.tz_convert(TZ)
+        if "timestamp" in obs.columns:
+            obs["timestamp"] = pd.to_datetime(obs["timestamp"], errors="coerce", utc=True)
+            obs["timestamp"] = obs["timestamp"].dt.tz_convert(TZ)
+
         obs = obs.dropna(subset=["timestamp"]).sort_values("timestamp", ascending=False)
 
         pretty = obs.copy()
         pretty["Fecha y hora"] = pretty["timestamp"].dt.strftime("%d/%m/%Y %H:%M")
         pretty["Spot"] = pretty["spot"].astype(str)
-        pretty["Mi nota"] = pretty["mi_nota_10"].astype(float).map(lambda x: f"{x:.1f}")
+        pretty["Mi nota"] = pd.to_numeric(pretty["mi_nota_10"], errors="coerce").map(
+            lambda x: f"{x:.1f}" if pd.notna(x) else "—"
+        )
         pretty["Comentario"] = pretty["comentario"].fillna("").astype(str)
 
         def fmt_cond(r):
             try:
-                if pd.isna(r["main_h"]) or pd.isna(r["wind_spd"]):
+                if pd.isna(r.get("main_h")) or pd.isna(r.get("wind_spd")):
                     return "—"
                 return (
                     f"Ola {float(r['main_h']):.1f}m {float(r['main_per']):.0f}s · "
@@ -1738,9 +1678,12 @@ with tab_hist:
         pretty["Condiciones"] = pretty.apply(fmt_cond, axis=1)
         pretty = pretty[["Fecha y hora", "Spot", "Mi nota", "Condiciones", "Comentario"]]
 
-        rows = []
-        for _, r in pretty.iterrows():
-            rows.append(f"""
+        if is_mobile:
+            st.dataframe(pretty, use_container_width=True, hide_index=True)
+        else:
+            rows = []
+            for _, r in pretty.iterrows():
+                rows.append(f"""
 <tr>
   <td class="rowtitle">{r['Fecha y hora']}</td>
   <td>{r['Spot']}</td>
@@ -1750,7 +1693,7 @@ with tab_hist:
 </tr>
 """)
 
-        table = f"""
+            table = f"""
 <div class="tablewrap">
   <table>
     <thead>
@@ -1768,7 +1711,7 @@ with tab_hist:
   </table>
 </div>
 """
-        st.markdown(table, unsafe_allow_html=True)
+            st.markdown(table, unsafe_allow_html=True)
 
         st.write("")
         st.download_button(
