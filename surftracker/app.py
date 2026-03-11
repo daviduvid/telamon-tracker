@@ -471,6 +471,29 @@ def github_headers():
         "Accept": "application/vnd.github+json",
     }
 
+def cargar_observaciones_repo():
+    try:
+        cfg = github_cfg()
+        url = f"https://api.github.com/repos/{cfg['owner']}/{cfg['repo']}/contents/{cfg['path']}"
+
+        r = requests.get(url, headers=github_headers())
+
+        if r.status_code != 200:
+            return pd.DataFrame()
+
+        payload = r.json()
+        raw = base64.b64decode(payload["content"]).decode("utf-8")
+
+        df = pd.read_csv(io.StringIO(raw))
+
+        if "timestamp" in df.columns:
+            df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+
+        return df
+
+    except Exception:
+        return pd.DataFrame()
+
 def columnas_observaciones():
     return [
         "id","timestamp","spot","mi_nota_10","comentario",
