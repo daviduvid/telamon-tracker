@@ -4,4 +4,5 @@ timestamp,spot,mi_nota_10,comentario,score_parte_10,main_h,main_per,main_dir,win
 ,Telamon,4.5,,2.3157894736842106,1.16,7.1,63.0,35.1,27.0,-0.45,LADO,4f00ae43-3aa2-45de-b0d4-1321cf37331b
 ,Telamon,4.5,,2.3157894736842106,1.16,7.1,63.0,35.1,27.0,-0.45,LADO,54cf621e-71cb-4b82-80cf-b0b64108ab4b
 ,Telamon,6.0,Coeficiente de marea llena bajo pero posible baño ,2.3157894736842106,1.16,6.3,69.0,45.2,16.0,0.03,LADO,d9ce7214-15ef-4ac3-a9e1-8edee1cba50e
-2026-03-12T08:10:00+00:00,Telamon,5.5,"Marea muy baja, 0.2 ",2.3157894736842106,1.32,6.55,46.0,20.2,11.0,-0.1,LADO,4e3c3235-6176-49e6-94d5-60e877ac6ba0
+,Telamon,5.5,"Marea muy baja, 0.2 ",2.3157894736842106,1.32,6.55,46.0,20.2,11.0,-0.1,LADO,4e3c3235-6176-49e6-94d5-60e877ac6ba0
+2026-03-14T13:00:00+00:00,Telamon,1.0,,1.1578947368421053,0.52,6.1,26.0,32.2,40.0,-0.25,ON,e9b437b6-ceee-4c3f-b0f0-ab45dbdc376f
