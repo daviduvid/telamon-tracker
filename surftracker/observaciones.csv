@@ -6,4 +6,5 @@ timestamp,spot,mi_nota_10,comentario,score_parte_10,main_h,main_per,main_dir,win
 ,Telamon,6.0,Coeficiente de marea llena bajo pero posible baño ,2.3157894736842106,1.16,6.3,69.0,45.2,16.0,0.03,LADO,d9ce7214-15ef-4ac3-a9e1-8edee1cba50e
 ,Telamon,5.5,"Marea muy baja, 0.2 ",2.3157894736842106,1.32,6.55,46.0,20.2,11.0,-0.1,LADO,4e3c3235-6176-49e6-94d5-60e877ac6ba0
 ,Telamon,1.0,,1.1578947368421053,0.52,6.1,26.0,32.2,40.0,-0.25,ON,e9b437b6-ceee-4c3f-b0f0-ab45dbdc376f
-2026-03-15T11:24:00+00:00,Telamon,1.0,,2.3157894736842106,0.78,5.4,52.0,29.9,31.0,0.33,LADO,c35b8c4e-efbb-489c-855a-9661a7696c12
+,Telamon,1.0,,2.3157894736842106,0.78,5.4,52.0,29.9,31.0,0.33,LADO,c35b8c4e-efbb-489c-855a-9661a7696c12
+2026-03-16T17:56:00+00:00,Telamon,1.0,,1.1578947368421053,0.56,5.6,37.0,11.1,77.0,-1.09,ON,6b2c117a-78aa-4306-85f5-c139727b6051
